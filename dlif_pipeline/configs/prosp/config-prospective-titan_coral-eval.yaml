@@ -22,17 +22,37 @@ prepare_dataset: true
 bags_dir: dlif_pipeline/bags_prospective
 
 annotation_file: ../data/prospective/annotations.csv
-train_df: ../data/prospective/features_dataset_cb_dp-titan-coral.parquet
+train_df: ["../data/prospective/features_dataset_radpy_fixed_dp-titan-coral.parquet", "../data/prospective/features_dataset_fmrad_dp-titan-coral.parquet"]
 
 mods:
-    # CB_DP
+# CB_DP
   - cb: true
     radpy: false
     dp-titan-coral: true
     genomics: false
-    # CB_DP_GENOMICS
+# CB_DP_GENOMICS
   - cb: true
     radpy: false
+    dp-titan-coral: true
+    genomics: true
+#CB_DP_RADPY
+  - cb: true
+    radpy: true
+    dp-titan-coral: true
+    genomics: false
+#CB_DP_FMRAD
+  - cb: true
+    radfm: true
+    dp-titan-coral: true
+    genomics: false
+#CB_DP_FMRAD_GENOMICS
+  - cb: true
+    radfm: true
+    dp-titan-coral: true
+    genomics: true
+#CB_DP_PYRAD_GENOMICS
+  - cb: true
+    radpy: true
     dp-titan-coral: true
     genomics: true
 

@@ -1,0 +1,77 @@
+# Evaluation-mode inference on the prospective cohort, using the cb-only
+# model already trained in "standard" mode on the retrospective cohort.
+# No bare cb+genomics standard checkpoint exists (only cb, and genomics
+# combined with dp/radpy), so genomics is left out here.
+task: classification
+task_settings:
+  outcomes: ["DCR", "os_months_24", "os_months_6"]
+  loss: mm_loss
+
+training_type: evaluation
+eval_model_training_type: standard   # look up the checkpoint trained with training_type=standard
+eval_cohort_tag: prospective         # write outputs to evaluation_prospective/, not evaluation/ (shared with the retrospective ext_val eval)
+eval_dataset_split: ext_val          # must match the split tag written by create_annotations.py --default-dataset
+
+data-type: hypothesis_driven
+source: pyrad
+imp: noimp
+seed: [0]
+
+use_early_stopping: true
+prepare_dataset: true 
+bags_dir: dlif_pipeline/bags_prospective
+
+annotation_file: ../data/prospective/annotations.csv
+train_df: ["../data/prospective/features_dataset_radpy_fixed.parquet", "../data/prospective/features_dataset_fmrad.parquet"]
+
+mods:
+# # CB
+#   - cb: true
+#     radpy: false
+#     dp: false
+#     genomics: false
+# # CB_DP
+#   - cb: true
+#     radpy: false
+#     dp: true
+#     genomics: false
+# # CB_RADPY
+#   - cb: true
+#     radpy: true
+#     dp: false
+#     genomics: false
+# CB_FMRAD
+  - cb: true
+    radfm: true
+    dp: false
+    genomics: false
+# # CB_DP_GENOMICS
+#   - cb: true
+#     radpy: false
+#     dp: true
+#     genomics: true
+# #CB_DP_RADPY
+#   - cb: true
+#     radpy: true
+#     dp: true
+#     genomics: false
+#CB_DP_FMRAD
+  - cb: true
+    radfm: true
+    dp: true
+    genomics: false
+#CB_DP_FMRAD_GENOMICS
+  - cb: true
+    radfm: true
+    dp: true
+    genomics: true
+# #CB_DP_PYRAD_GENOMICS
+#   - cb: true
+#     radpy: true
+#     dp: true
+#     genomics: true
+
+hyperparameters_default:
+  batch_size: 16
+  reconstruction_weight: 0.1
+  n_layers: 2

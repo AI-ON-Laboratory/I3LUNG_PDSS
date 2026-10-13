@@ -20,36 +20,36 @@ annotation_file: ../data/annotations.csv
 # bags_dir: 
 
 mods:
-  # CB_DP
-  - cb: true
-    radpy: false
-    dp: false
-    dp-titan: true
-    genomics: false
-  # CB_DP_FMRAD
-  - cb: true
-    radfm: true
-    dp: false
-    dp-titan: true
-    genomics: false
-  # CB_DP_PYRAD
-  - cb: true
-    radpy: true
-    dp: false
-    dp-titan: true
-    genomics: false
-  # CB_DP_GENOMICS
-  - cb: true
-    radpy: false
-    dp: false
-    dp-titan: true
-    genomics: true
-  # CB_RADFM_DP_GENOMICS
-  - cb: true
-    radfm: true
-    dp: false
-    dp-titan: true
-    genomics: true
+  # # CB_DP
+  # - cb: true
+  #   radpy: false
+  #   dp: false
+  #   dp-titan: true
+  #   genomics: false
+  # # CB_DP_FMRAD
+  # - cb: true
+  #   radfm: true
+  #   dp: false
+  #   dp-titan: true
+  #   genomics: false
+  # # CB_DP_PYRAD
+  # - cb: true
+  #   radpy: true
+  #   dp: false
+  #   dp-titan: true
+  #   genomics: false
+  # # CB_DP_GENOMICS
+  # - cb: true
+  #   radpy: false
+  #   dp: false
+  #   dp-titan: true
+  #   genomics: true
+  # # CB_RADFM_DP_GENOMICS
+  # - cb: true
+  #   radfm: true
+  #   dp: false
+  #   dp-titan: true
+  #   genomics: true
   # CB_RADPY_DP_GENOMICS
   - cb: true
     radpy: true

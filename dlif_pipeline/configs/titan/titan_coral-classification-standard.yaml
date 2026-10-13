@@ -13,43 +13,43 @@ imp: noimp  # noimp/imp
 seed: [0]
 
 use_early_stopping: true
-prepare_dataset: true
+prepare_dataset: false
 
 train_df: [ "../data/features_dataset_radpy_fixed_dp-titan-coral.parquet", "../data/features_dataset_fmrad_dp-titan-coral.parquet" ]
 annotation_file: ../data/annotations.csv
 # bags_dir:
 
 mods:
-  # CB_DP
-  - cb: true
-    radpy: false
-    dp: false
-    dp-titan-coral: true
-    genomics: false
-  # CB_DP_FMRAD
-  - cb: true
-    radfm: true
-    dp: false
-    dp-titan-coral: true
-    genomics: false
-  # CB_DP_PYRAD
-  - cb: true
-    radpy: true
-    dp: false
-    dp-titan-coral: true
-    genomics: false
-  # CB_DP_GENOMICS
-  - cb: true
-    radpy: false
-    dp: false
-    dp-titan-coral: true
-    genomics: true
-  # CB_RADFM_DP_GENOMICS
-  - cb: true
-    radfm: true
-    dp: false
-    dp-titan-coral: true
-    genomics: true
+  # # CB_DP
+  # - cb: true
+  #   radpy: false
+  #   dp: false
+  #   dp-titan-coral: true
+  #   genomics: false
+  # # CB_DP_FMRAD
+  # - cb: true
+  #   radfm: true
+  #   dp: false
+  #   dp-titan-coral: true
+  #   genomics: false
+  # # CB_DP_PYRAD
+  # - cb: true
+  #   radpy: true
+  #   dp: false
+  #   dp-titan-coral: true
+  #   genomics: false
+  # # CB_DP_GENOMICS
+  # - cb: true
+  #   radpy: false
+  #   dp: false
+  #   dp-titan-coral: true
+  #   genomics: true
+  # # CB_RADFM_DP_GENOMICS
+  # - cb: true
+  #   radfm: true
+  #   dp: false
+  #   dp-titan-coral: true
+  #   genomics: true
   # CB_RADPY_DP_GENOMICS
   - cb: true
     radpy: true
