@@ -620,19 +620,20 @@ class TrainerConfig:
 # -----------------------------------------------------------------------------
 
 class CoxProportionalHazardsLoss(torch.nn.modules.loss._Loss):
-    """Cox proportional hazards loss.
+    """Cox proportional hazards loss with Breslow tie handling.
     Adapted from https://github.com/havakv/pycox/blob/master/pycox/models/loss.py
     """
     def __init__(self, reduction: str = 'mean', eps: float = 1e-7):
         """
         Args:
             reduction (str): Specifies the reduction to apply to the output.
-                'none': no reduction will be applied,
-                'mean': the sum of the output will be divided by the number of elements in the output,
+                'mean': the sum of the output will be divided by the number of events,
                 'sum': the output will be summed.
             eps (float): Small constant value to avoid division by zero.
         """
         super().__init__(reduction=reduction)
+        if reduction not in ('mean', 'sum'):
+            raise ValueError(f"reduction must be 'mean' or 'sum', got {reduction}")
         self.eps = eps
 
     def forward(self, y_pred: torch.Tensor, y_true: torch.Tensor) -> torch.Tensor:
@@ -647,21 +648,24 @@ class CoxProportionalHazardsLoss(torch.nn.modules.loss._Loss):
         events = y_true[:, 1]
         log_h = y_pred
 
-        # Sort by descending duration
-        idx = torch.sort(durations, descending=True)[1]
-        events = events[idx]
-        log_h = log_h[idx]
+        n_events = events.sum()
+        if n_events == 0:
+            return (log_h * 0).sum()
 
-        events = events.view(-1)
-        log_h = log_h.view(-1)
+        # Sort by descending duration
+        durations, idx = torch.sort(durations, descending=True, stable=True)
+        events = events[idx].view(-1)
+        log_h = log_h[idx].view(-1)
 
         gamma = log_h.max()
         log_cumsum_h = log_h.sub(gamma).exp().cumsum(0).add(self.eps).log().add(gamma)
 
-        if events.sum() == 0:
-            return torch.tensor(0.0, device=log_h.device, requires_grad=True)
-        else:
-            return - log_h.sub(log_cumsum_h).mul(events).sum().div(events.sum())
+        # Breslow ties: every tied subject uses the value at the end of its group
+        _, group, counts = torch.unique_consecutive(durations, return_inverse=True, return_counts=True)
+        log_cumsum_h = log_cumsum_h[counts.cumsum(0) - 1][group]
+
+        loss = - log_h.sub(log_cumsum_h).mul(events).sum()
+        return loss.div(n_events) if self.reduction == 'mean' else loss
 
 class BaseMultimodalLoss(nn.Module):
     """Base class for multimodal losses with reconstruction component."""
@@ -762,7 +766,7 @@ class MultimodalSurvivalLoss(BaseMultimodalLoss):
             weight (torch.Tensor, optional): Not used, included for API consistency.
         """
         super().__init__(reconstruction_weight=reconstruction_weight)
-        self.cph = CoxProportionalHazardsLoss(reduction='none')
+        self.cph = CoxProportionalHazardsLoss()
 
     def forward(self, logits, targets):
         # If logits is not tuple, apply CPH loss directly
