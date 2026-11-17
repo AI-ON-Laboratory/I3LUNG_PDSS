@@ -622,6 +622,11 @@ class TrainerConfig:
 class CoxProportionalHazardsLoss(torch.nn.modules.loss._Loss):
     """Cox proportional hazards loss with Breslow tie handling.
     Adapted from https://github.com/havakv/pycox/blob/master/pycox/models/loss.py
+
+    NOTE: This function was edited to match the I3LUNG methods description, 
+    which defines risk sets as T_j >= T_i (i.e. subjects with tied times share
+    the same risk set). For the previous implementation and full details, see
+    https://github.com/AI-ON-Laboratory/I3LUNG_PDSS/issues/17
     """
     def __init__(self, reduction: str = 'mean', eps: float = 1e-7):
         """
